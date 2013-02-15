@@ -1,5 +1,6 @@
 clear;
 close all;
+
 stack = tiffread;
 n_stack = size(stack,2);
 for i = 1:n_stack
@@ -7,18 +8,6 @@ for i = 1:n_stack
 end
 clear i;
 %FH1 = figure; imshow(target(:,:,40), 'DisplayRange', [], 'InitialMagnification', 'fit'); %Stackの先頭をFigureとして表示
-
-%{
-行列サイズを可変にする場合
-data_matrix = [];
-
-for j=1:n_stack
-    X=double(target(:,:,j));
-    data_matrix = [data_matrix,X(:)];
-end
-
-clear j;
-%}
 
 W = numel(target)./n_stack;
 sample = zeros(W,n_stack);
@@ -29,42 +18,20 @@ end
 [size_y,size_x] = size(X);    
 clear j;
 
-%{
-model = perform_pca_PhD(sample,rank(sample)-1); %generate PCA model
- 
-figure(1)
-imshow(reshape(model.P,size_y,size_x),[])
-title('Mean face')
- 
-figure(2)
-   for i=1:6
-       subplot(4,2,i)
-       imshow(reshape(model.W(:,i),size_y,size_x),[])
-       title(sprintf('Eigenface no. %i',i));
-   end
-subplot(4,2,7)
-imshow(reshape(model.W(:,20),size_y,size_x),[])
-title('Eigenface no. 20')
-subplot(4,2,8)
-imshow(reshape(model.W(:,30),size_y,size_x),[])
-title('Eigenface no. 30')  
-set(gcf,'Name', 'PCA components/Eigenfaces/eigenvectors in image form')    
-%}
-
 [coefs,scores,variances,t2] = princomp(sample);
 percent_explained = 100*variances/sum(variances);
-
-%imshow(reshape(scores(:,i),size(X)),[])
 
 Result= zeros(size_y,size_x,n_stack);
 for n=1:n_stack
     Result(:,:,n) = reshape(scores(:,n),size(X));
 end
 
-fig_num = 0
+%%　ここから出力
 
-figure(1)
-if n_stack>30
+fig_num;%表示する図の数
+
+figure(1)%eigen imageの表示
+if n_stack>30%変数の数で分岐、
        for i=1:6
        subplot(4,2,i)
        imshow(Result(:,:,i),[])
@@ -85,15 +52,10 @@ else
     end
     fig_num=4;
 end
-%{
-figure(2)
-pareto(percent_explained);
-biplot(coefs(:,1:2), 'scores',scores(:,1:2));
-%}
 
 figure(4)
-Leg=cell(fig_num,1);
-text='Component';
+Leg=cell(fig_num,1);%legend用
+text='Component';%legend用
 for i=1:1:fig_num
     plot(coefs(:,i));
     hold all;
@@ -102,6 +64,7 @@ end
 legend(Leg);
 legend('show');
 
+%{
 [Z,mu,sigma] = zscore(sample);
 [coefs_Z,scores_Z,variances_Z,t2_Z] = princomp(Z);
 percent_explained_Z = 100*variances_Z/sum(variances_Z);
@@ -130,3 +93,6 @@ else
        title(sprintf('Eigenimage no. %i',i));
    end 
 end
+%}
+
+
