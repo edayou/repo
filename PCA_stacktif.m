@@ -61,6 +61,8 @@ for n=1:n_stack
     Result(:,:,n) = reshape(scores(:,n),size(X));
 end
 
+fig_num = 0
+
 figure(1)
 if n_stack>30
        for i=1:6
@@ -74,18 +76,31 @@ if n_stack>30
     subplot(4,2,8)
     imshow(Result(:,:,30),[])
     title('Eigenimage no. 30')
+    fig_num=6;
 else
     for i=1:4
        subplot(2,2,i)
        imshow(Result(:,:,i),[])
        title(sprintf('Eigenimage no. %i',i));
     end
+    fig_num=4;
 end
 %{
 figure(2)
 pareto(percent_explained);
 biplot(coefs(:,1:2), 'scores',scores(:,1:2));
 %}
+
+figure(4)
+Leg=cell(fig_num,1);
+text='Component';
+for i=1:1:fig_num
+    plot(coefs(:,i));
+    hold all;
+    Leg{i,1}=[text, num2str(i)];
+end
+legend(Leg);
+legend('show');
 
 [Z,mu,sigma] = zscore(sample);
 [coefs_Z,scores_Z,variances_Z,t2_Z] = princomp(Z);
