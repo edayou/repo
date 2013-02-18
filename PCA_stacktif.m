@@ -7,7 +7,8 @@ for i = 1:n_stack
     target(:,:,i) = stack(i).data;
 end
 clear i;
-%FH1 = figure; imshow(target(:,:,40), 'DisplayRange', [], 'InitialMagnification', 'fit'); %Stackの先頭をFigureとして表示
+%FH1 = figure; imshow(target(:,:,40), 'DisplayRange', [],
+%'InitialMagnification', 'fit'); %Stackの先頭をFigureとして表示
 
 W = numel(target)./n_stack;
 sample = zeros(W,n_stack);
@@ -26,9 +27,9 @@ for n=1:n_stack
     Result(:,:,n) = reshape(scores(:,n),size(X));
 end
 
-%%　ここから出力
+%---　ここから出力
 
-fig_num;%表示する図の数
+global fig_num;%表示する図の数
 
 figure(1)%eigen imageの表示
 if n_stack>30%変数の数で分岐、
@@ -54,9 +55,10 @@ else
 end
 
 figure(4)
-Leg=cell(fig_num,1);%legend用
-text='Component';%legend用
-for i=1:1:fig_num
+Leg=cell(4,1);%legend name 
+text='Comp';%legend name
+%可視性を保つために表示を4つに限定、fig_num→4
+for i=1:1:4
     plot(coefs(:,i));
     hold all;
     Leg{i,1}=[text, num2str(i)];
