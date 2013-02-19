@@ -59,8 +59,14 @@ handles.output = hObject;
 guidata(hObject, handles);
 
 load mat.mat;%データ読み込み
+
+filename = tempname;
+save(filename);%変数を一時ファイルに保存
+
+Leg=cell(4,1);
+text='Comp';
 axes(handles.axes1);
-for i=1:1:fig_num
+for i=1:1:4
     plot(coefs(:,i));
     hold all;
     Leg{i,1}=[text, num2str(i)];
@@ -68,8 +74,12 @@ end
 legend(Leg);
 legend('show');
 hleg1=legend(Leg);%handls of legend
-set(hleg1,'Location','EastOutside');
+set(hleg1,'Location','NorthEast');%なんか警告が出る
 
+
+
+
+%{
 axes(handles.axes3);
 a = imread('hexa_orientation.tif');
 [wid,hei]=size(a);
@@ -82,8 +92,9 @@ set(gca, ...
     ,'YLim'   ,get(Img,'YData')  ...
     ,'Position', [0.6 0.069 0.36/hei*wid 0.36] ....
     );
+%}
 %disp(get(handles.axes3,'Position')); setで'Position'をいじってやれば大きさ変えられる？
-
+%別ウィンドウに開いて出すのが良さげ．Fig中でsubplot使うと全体に表示しちゃう．
 % UIWAIT makes pop_axe wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
@@ -104,19 +115,17 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-Co = str2double(get(handles.edit1, 'String'));
-x = 0:0.01:10*pi*Co;
-y = sin(x);
-popup_sel_index = get(handles.popupmenu1, 'Value');
-switch popup_sel_index
-    case 1
-        plot(handles.axes1,x,y);
-    case 2
-        plot(handles.axes2,x,y);
-    case 3
-        plot(handles.axes1,x,y);
-        plot(handles.axes2,x,y);
+
+load mat.mat;
+axes(handles.axes2);
+for i=1:1:4
+    plot(coefs(:,i));
+    hold all;
 end
+legend(Leg);
+legend('show');
+hleg2=legend(Leg);%handls of legend
+set(hleg2,'Location','NorthEast');%なんか警告が出る
 
 % --- Executes on button press in pushbutton2.
 function pushbutton2_Callback(hObject, eventdata, handles)
