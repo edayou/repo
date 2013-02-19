@@ -96,5 +96,14 @@ else
    end 
 end
 %}
+currentfolder=pwd;
+name='\tukaisute.mat';
+fn = strcat(currentfolder,name);
+save(fn);
 
-
+d=exist('pop_axe_export.m','file');
+if (1<d && d<3)%if file exists, value of 'd' should be 2.
+    run pop_axe_export;
+else
+    disp('"pop_axe_export.m" file is need for more detail analysis!');
+end
